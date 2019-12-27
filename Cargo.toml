@@ -1,9 +1,13 @@
 [package]
 name = "audio-mixer"
-version = "0.1.0"
+description = "Mixing audio by the input and output channel layout"
+version = "0.1.1"
 authors = ["Chun-Min Chang <chun.m.chang@gmail.com>"]
-edition = "2018"
 license = "MPL-2.0"
+repository = "https://github.com/ChunMinChang/audio-mixer"
+keywords = ["audio", "mixer", "mixing"]
+categories = ["multimedia::audio"]
+edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
