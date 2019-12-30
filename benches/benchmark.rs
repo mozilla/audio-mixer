@@ -1,5 +1,5 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use audio_mixer::{Channel, Mixer};
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use std::any::{Any, TypeId};
 
