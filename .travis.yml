@@ -1,0 +1,25 @@
+language: rust
+rust:
+  - stable
+  - beta
+  - nightly
+os:
+  - windows
+  - linux
+  - osx
+env:
+  - RUST_BACKTRACE=1
+before_script:
+  - rustc --version
+  - cargo --version
+  - rustup component add rustfmt
+  - rustup component add clippy
+script:
+  - cargo fmt --all -- --check
+  - cargo clippy --all-targets --all-features -- -D warnings
+  - cargo build --verbose --all
+  - cargo test --verbose --all
+jobs:
+  allow_failures:
+    - rust: nightly
+  fast_finish: true

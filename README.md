@@ -1,5 +1,7 @@
 # Audio Mixer
 
+[![Build Status](https://travis-ci.com/ChunMinChang/audio-mixer.svg?branch=master)](https://travis-ci.com/ChunMinChang/audio-mixer)
+
 Mixing audio data from any inpuy channel layout to any output channel layout.
 
 The code is based from [cubeb][cubeb]'s [cubeb_mixer][cubeb_mixer],
