@@ -547,6 +547,16 @@ mod test {
     }
 
     #[test]
+    fn test_create_with_duplicate_silience_channels_f32() {
+        test_create_with_duplicate_silience_channels::<f32>()
+    }
+
+    #[test]
+    fn test_create_with_duplicate_silience_channels_i16() {
+        test_create_with_duplicate_silience_channels::<i16>()
+    }
+
+    #[test]
     #[should_panic]
     fn test_create_with_duplicate_input_channels_f32() {
         test_create_with_duplicate_input_channels::<f32>()
@@ -570,6 +580,29 @@ mod test {
         test_create_with_duplicate_output_channels::<i16>()
     }
 
+    fn test_create_with_duplicate_silience_channels<T>()
+    where
+        T: MixingCoefficient,
+        T::Coef: Copy,
+    {
+        // Duplicate of Silence channels is allowed on both input side and output side.
+        let input_channels = [
+            Channel::FrontLeft,
+            Channel::Silence,
+            Channel::FrontRight,
+            Channel::FrontCenter,
+            Channel::Silence,
+        ];
+        let output_channels = [
+            Channel::Silence,
+            Channel::FrontRight,
+            Channel::FrontLeft,
+            Channel::BackCenter,
+            Channel::Silence,
+        ];
+        let _ = Coefficient::<T>::create(&input_channels, &output_channels);
+    }
+
     fn test_create_with_duplicate_input_channels<T>()
     where
         T: MixingCoefficient,
@@ -585,7 +618,6 @@ mod test {
             Channel::Silence,
             Channel::FrontRight,
             Channel::FrontLeft,
-            Channel::Silence,
             Channel::FrontCenter,
             Channel::BackCenter,
         ];
