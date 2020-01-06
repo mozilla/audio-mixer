@@ -727,7 +727,26 @@ mod test {
             vec![1.0_f64, 2.0_f64, 3.0_f64],
             vec![4.0_f64, 6.0_f64, 10.0_f64],
         ];
-        let n = Coefficient::<f32>::normalize(10.0, m.clone());
-        println!("m: {:?}, n: {:?}", m, n);
+
+        let mut max_row_sum: f64 = std::f64::MIN;
+        for row in &m {
+            max_row_sum = max_row_sum.max(row.iter().sum());
+        }
+
+        // Type of Coefficient doesn't matter here.
+        // If the first argument of normalize >= max_row_sum, do nothing.
+        let n = Coefficient::<f32>::normalize(max_row_sum, m.clone());
+        assert_eq!(n, m);
+
+        // If the first argument of normalize < max_row_sum, do normalizing.
+        let smaller_max = max_row_sum - 0.5_f64;
+        assert!(smaller_max > 0.0_f64);
+        let n = Coefficient::<f32>::normalize(smaller_max, m);
+        let mut max_row_sum: f64 = std::f64::MIN;
+        for row in &n {
+            max_row_sum = max_row_sum.max(row.iter().sum());
+            assert!(row.iter().sum::<f64>() <= smaller_max);
+        }
+        assert!((smaller_max - max_row_sum).abs() < std::f64::EPSILON);
     }
 }
