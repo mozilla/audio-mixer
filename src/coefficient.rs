@@ -498,34 +498,52 @@ mod test {
 
     #[test]
     fn test_create_f32() {
-        test_create::<f32>();
+        test_create::<f32>(MixDirection::Downmix);
+        test_create::<f32>(MixDirection::Upmix);
     }
 
     #[test]
     fn test_create_i16() {
-        test_create::<i16>();
+        test_create::<i16>(MixDirection::Downmix);
+        test_create::<i16>(MixDirection::Upmix);
     }
 
-    fn test_create<T>()
+    fn test_create<T>(direction: MixDirection)
     where
         T: MixingCoefficient,
         T::Coef: Copy + Debug,
     {
-        let input_channels = [
-            Channel::Silence,
-            Channel::FrontRight,
-            Channel::FrontLeft,
-            Channel::Silence,
-            Channel::FrontCenter,
-            Channel::BackCenter,
-            Channel::LowFrequency,
-        ];
-        let output_channels = [Channel::Silence, Channel::FrontRight, Channel::FrontLeft];
+        let (input_channels, output_channels) = get_test_channels(direction);
         let coefficient = Coefficient::<T>::create(&input_channels, &output_channels);
         println!(
             "{:?} = {:?} * {:?}",
             output_channels, coefficient.matrix, input_channels
         );
+    }
+
+    enum MixDirection {
+        Downmix,
+        Upmix,
+    }
+    fn get_test_channels(direction: MixDirection) -> (Vec<Channel>, Vec<Channel>) {
+        let more = vec![
+            Channel::Silence,
+            Channel::FrontRight,
+            Channel::FrontLeft,
+            Channel::LowFrequency,
+            Channel::Silence,
+            Channel::BackCenter,
+        ];
+        let less = vec![
+            Channel::FrontLeft,
+            Channel::Silence,
+            Channel::FrontRight,
+            Channel::FrontCenter,
+        ];
+        match direction {
+            MixDirection::Downmix => (more, less),
+            MixDirection::Upmix => (less, more),
+        }
     }
 
     #[test]
