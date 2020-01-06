@@ -493,190 +493,191 @@ impl MixingCoefficient for i16 {
 }
 
 #[cfg(test)]
-fn test_create<T>()
-where
-    T: MixingCoefficient,
-    T::Coef: Copy + Debug,
-{
-    let input_channels = [
-        Channel::Silence,
-        Channel::FrontRight,
-        Channel::FrontLeft,
-        Channel::Silence,
-        Channel::FrontCenter,
-        Channel::BackCenter,
-        Channel::LowFrequency,
-    ];
-    let output_channels = [Channel::Silence, Channel::FrontRight, Channel::FrontLeft];
-    let coefficient = Coefficient::<T>::create(&input_channels, &output_channels);
-    println!(
-        "{:?} = {:?} * {:?}",
-        output_channels, coefficient.matrix, input_channels
-    );
-}
+mod test {
+    use super::*;
 
-#[test]
-fn test_create_f32() {
-    test_create::<f32>();
-}
-
-#[test]
-fn test_create_i16() {
-    test_create::<i16>();
-}
-
-#[cfg(test)]
-fn test_create_with_duplicate_input_channels<T>()
-where
-    T: MixingCoefficient,
-    T::Coef: Copy,
-{
-    let input_channels = [
-        Channel::FrontLeft,
-        Channel::Silence,
-        Channel::FrontLeft,
-        Channel::FrontCenter,
-    ];
-    let output_channels = [
-        Channel::Silence,
-        Channel::FrontRight,
-        Channel::FrontLeft,
-        Channel::Silence,
-        Channel::FrontCenter,
-        Channel::BackCenter,
-    ];
-    let _ = Coefficient::<T>::create(&input_channels, &output_channels);
-}
-
-#[test]
-#[should_panic]
-fn test_create_with_duplicate_input_channels_f32() {
-    test_create_with_duplicate_input_channels::<f32>()
-}
-
-#[test]
-#[should_panic]
-fn test_create_with_duplicate_input_channels_i16() {
-    test_create_with_duplicate_input_channels::<i16>()
-}
-
-#[cfg(test)]
-fn test_create_with_duplicate_output_channels<T>()
-where
-    T: MixingCoefficient,
-    T::Coef: Copy,
-{
-    let input_channels = [
-        Channel::FrontLeft,
-        Channel::Silence,
-        Channel::FrontRight,
-        Channel::FrontCenter,
-    ];
-    let output_channels = [
-        Channel::Silence,
-        Channel::FrontRight,
-        Channel::FrontLeft,
-        Channel::FrontCenter,
-        Channel::FrontCenter,
-        Channel::BackCenter,
-    ];
-    let _ = Coefficient::<T>::create(&input_channels, &output_channels);
-}
-
-#[test]
-#[should_panic]
-fn test_create_with_duplicate_output_channels_f32() {
-    test_create_with_duplicate_output_channels::<f32>()
-}
-
-#[test]
-#[should_panic]
-fn test_create_with_duplicate_output_channels_i16() {
-    test_create_with_duplicate_output_channels::<i16>()
-}
-
-#[cfg(test)]
-fn test_get_redirect_matrix<T>()
-where
-    T: MixingCoefficient,
-    T::Coef: Copy + Debug + PartialEq,
-{
-    // Create a matrix that only redirect the channels from input side to output side,
-    // without mixing input audio data to output audio data.
-    fn compute_redirect_matrix<T>(
-        input_channels: &[Channel],
-        output_channels: &[Channel],
-    ) -> Vec<Vec<T::Coef>>
-    where
-        T: MixingCoefficient,
-    {
-        let mut matrix = Vec::with_capacity(output_channels.len());
-        for output_channel in output_channels {
-            let mut row = Vec::with_capacity(input_channels.len());
-            for input_channel in input_channels {
-                row.push(
-                    if input_channel != output_channel
-                        || input_channel == &Channel::Silence
-                        || output_channel == &Channel::Silence
-                    {
-                        0.0
-                    } else {
-                        1.0
-                    },
-                );
-            }
-            matrix.push(row);
-        }
-
-        // Convert the type of the coefficients from f64 to T::Coef.
-        matrix
-            .into_iter()
-            .map(|row| row.into_iter().map(T::coefficient_from_f64).collect())
-            .collect()
+    #[test]
+    fn test_create_f32() {
+        test_create::<f32>();
     }
 
-    let input_channels = [
-        Channel::FrontLeft,
-        Channel::Silence,
-        Channel::FrontRight,
-        Channel::FrontCenter,
-    ];
-    let output_channels = [
-        Channel::Silence,
-        Channel::FrontLeft,
-        Channel::Silence,
-        Channel::FrontCenter,
-        Channel::BackCenter,
-    ];
+    #[test]
+    fn test_create_i16() {
+        test_create::<i16>();
+    }
 
-    // Get a redirect matrix since the output layout is asymmetric.
-    let coefficient = Coefficient::<T>::create(&input_channels, &output_channels);
+    fn test_create<T>()
+    where
+        T: MixingCoefficient,
+        T::Coef: Copy + Debug,
+    {
+        let input_channels = [
+            Channel::Silence,
+            Channel::FrontRight,
+            Channel::FrontLeft,
+            Channel::Silence,
+            Channel::FrontCenter,
+            Channel::BackCenter,
+            Channel::LowFrequency,
+        ];
+        let output_channels = [Channel::Silence, Channel::FrontRight, Channel::FrontLeft];
+        let coefficient = Coefficient::<T>::create(&input_channels, &output_channels);
+        println!(
+            "{:?} = {:?} * {:?}",
+            output_channels, coefficient.matrix, input_channels
+        );
+    }
 
-    let expected = compute_redirect_matrix::<T>(&input_channels, &output_channels);
-    assert_eq!(coefficient.matrix, expected);
+    #[test]
+    #[should_panic]
+    fn test_create_with_duplicate_input_channels_f32() {
+        test_create_with_duplicate_input_channels::<f32>()
+    }
 
-    println!(
-        "{:?} = {:?} * {:?}",
-        output_channels, coefficient.matrix, input_channels
-    );
-}
+    #[test]
+    #[should_panic]
+    fn test_create_with_duplicate_input_channels_i16() {
+        test_create_with_duplicate_input_channels::<i16>()
+    }
 
-#[test]
-fn test_get_redirect_matrix_f32() {
-    test_get_redirect_matrix::<f32>();
-}
+    #[test]
+    #[should_panic]
+    fn test_create_with_duplicate_output_channels_f32() {
+        test_create_with_duplicate_output_channels::<f32>()
+    }
 
-#[test]
-fn test_get_redirect_matrix_i16() {
-    test_get_redirect_matrix::<i16>();
-}
+    #[test]
+    #[should_panic]
+    fn test_create_with_duplicate_output_channels_i16() {
+        test_create_with_duplicate_output_channels::<i16>()
+    }
 
-#[test]
-fn test_normalize() {
-    let m = vec![
-        vec![1.0_f64, 2.0_f64, 3.0_f64],
-        vec![4.0_f64, 6.0_f64, 10.0_f64],
-    ];
-    let n = Coefficient::<f32>::normalize(10.0, m.clone());
-    println!("m: {:?}, n: {:?}", m, n);
+    fn test_create_with_duplicate_input_channels<T>()
+    where
+        T: MixingCoefficient,
+        T::Coef: Copy,
+    {
+        let input_channels = [
+            Channel::FrontLeft,
+            Channel::Silence,
+            Channel::FrontLeft,
+            Channel::FrontCenter,
+        ];
+        let output_channels = [
+            Channel::Silence,
+            Channel::FrontRight,
+            Channel::FrontLeft,
+            Channel::Silence,
+            Channel::FrontCenter,
+            Channel::BackCenter,
+        ];
+        let _ = Coefficient::<T>::create(&input_channels, &output_channels);
+    }
+
+    fn test_create_with_duplicate_output_channels<T>()
+    where
+        T: MixingCoefficient,
+        T::Coef: Copy,
+    {
+        let input_channels = [
+            Channel::FrontLeft,
+            Channel::Silence,
+            Channel::FrontRight,
+            Channel::FrontCenter,
+        ];
+        let output_channels = [
+            Channel::Silence,
+            Channel::FrontRight,
+            Channel::FrontLeft,
+            Channel::FrontCenter,
+            Channel::FrontCenter,
+            Channel::BackCenter,
+        ];
+        let _ = Coefficient::<T>::create(&input_channels, &output_channels);
+    }
+
+    #[test]
+    fn test_get_redirect_matrix_f32() {
+        test_get_redirect_matrix::<f32>();
+    }
+
+    #[test]
+    fn test_get_redirect_matrix_i16() {
+        test_get_redirect_matrix::<i16>();
+    }
+
+    fn test_get_redirect_matrix<T>()
+    where
+        T: MixingCoefficient,
+        T::Coef: Copy + Debug + PartialEq,
+    {
+        // Create a matrix that only redirect the channels from input side to output side,
+        // without mixing input audio data to output audio data.
+        fn compute_redirect_matrix<T>(
+            input_channels: &[Channel],
+            output_channels: &[Channel],
+        ) -> Vec<Vec<T::Coef>>
+        where
+            T: MixingCoefficient,
+        {
+            let mut matrix = Vec::with_capacity(output_channels.len());
+            for output_channel in output_channels {
+                let mut row = Vec::with_capacity(input_channels.len());
+                for input_channel in input_channels {
+                    row.push(
+                        if input_channel != output_channel
+                            || input_channel == &Channel::Silence
+                            || output_channel == &Channel::Silence
+                        {
+                            0.0
+                        } else {
+                            1.0
+                        },
+                    );
+                }
+                matrix.push(row);
+            }
+
+            // Convert the type of the coefficients from f64 to T::Coef.
+            matrix
+                .into_iter()
+                .map(|row| row.into_iter().map(T::coefficient_from_f64).collect())
+                .collect()
+        }
+
+        let input_channels = [
+            Channel::FrontLeft,
+            Channel::Silence,
+            Channel::FrontRight,
+            Channel::FrontCenter,
+        ];
+        let output_channels = [
+            Channel::Silence,
+            Channel::FrontLeft,
+            Channel::Silence,
+            Channel::FrontCenter,
+            Channel::BackCenter,
+        ];
+
+        // Get a redirect matrix since the output layout is asymmetric.
+        let coefficient = Coefficient::<T>::create(&input_channels, &output_channels);
+
+        let expected = compute_redirect_matrix::<T>(&input_channels, &output_channels);
+        assert_eq!(coefficient.matrix, expected);
+
+        println!(
+            "{:?} = {:?} * {:?}",
+            output_channels, coefficient.matrix, input_channels
+        );
+    }
+
+    #[test]
+    fn test_normalize() {
+        let m = vec![
+            vec![1.0_f64, 2.0_f64, 3.0_f64],
+            vec![4.0_f64, 6.0_f64, 10.0_f64],
+        ];
+        let n = Coefficient::<f32>::normalize(10.0, m.clone());
+        println!("m: {:?}, n: {:?}", m, n);
+    }
 }
