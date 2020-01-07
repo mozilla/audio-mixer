@@ -20,10 +20,10 @@ struct ChannelLayout {
 }
 
 impl ChannelLayout {
-    fn new(channels: Vec<Channel>) -> Result<Self, Error> {
-        let channel_map = Self::get_channel_map(&channels)?;
+    fn new(channels: &[Channel]) -> Result<Self, Error> {
+        let channel_map = Self::get_channel_map(channels)?;
         Ok(Self {
-            channels,
+            channels: channels.to_vec(),
             channel_map,
         })
     }
@@ -79,7 +79,7 @@ where
     //
     // In math, the in_audio and out_audio should be a 2D-matrix with several rows containing only
     // one column. However, the in_audio and out_audio are passed by 1-D matrix here for convenience.
-    pub fn create(input_channels: Vec<Channel>, output_channels: Vec<Channel>) -> Self {
+    pub fn create(input_channels: &[Channel], output_channels: &[Channel]) -> Self {
         let input_layout = ChannelLayout::new(input_channels).expect("Invalid input layout");
         let output_layout = ChannelLayout::new(output_channels).expect("Invalid output layout");
 
@@ -498,7 +498,7 @@ where
     T: MixingCoefficient,
     T::Coef: Copy + Debug,
 {
-    let input_channels = vec![
+    let input_channels = [
         Channel::Silence,
         Channel::FrontRight,
         Channel::FrontLeft,
@@ -507,8 +507,8 @@ where
         Channel::BackCenter,
         Channel::LowFrequency,
     ];
-    let output_channels = vec![Channel::Silence, Channel::FrontRight, Channel::FrontLeft];
-    let coefficient = Coefficient::<T>::create(input_channels.clone(), output_channels.clone());
+    let output_channels = [Channel::Silence, Channel::FrontRight, Channel::FrontLeft];
+    let coefficient = Coefficient::<T>::create(&input_channels, &output_channels);
     println!(
         "{:?} = {:?} * {:?}",
         output_channels, coefficient.matrix, input_channels
@@ -531,13 +531,13 @@ where
     T: MixingCoefficient,
     T::Coef: Copy,
 {
-    let input_channels = vec![
+    let input_channels = [
         Channel::FrontLeft,
         Channel::Silence,
         Channel::FrontLeft,
         Channel::FrontCenter,
     ];
-    let output_channels = vec![
+    let output_channels = [
         Channel::Silence,
         Channel::FrontRight,
         Channel::FrontLeft,
@@ -545,7 +545,7 @@ where
         Channel::FrontCenter,
         Channel::BackCenter,
     ];
-    let _ = Coefficient::<T>::create(input_channels, output_channels);
+    let _ = Coefficient::<T>::create(&input_channels, &output_channels);
 }
 
 #[test]
@@ -566,13 +566,13 @@ where
     T: MixingCoefficient,
     T::Coef: Copy,
 {
-    let input_channels = vec![
+    let input_channels = [
         Channel::FrontLeft,
         Channel::Silence,
         Channel::FrontRight,
         Channel::FrontCenter,
     ];
-    let output_channels = vec![
+    let output_channels = [
         Channel::Silence,
         Channel::FrontRight,
         Channel::FrontLeft,
@@ -580,7 +580,7 @@ where
         Channel::FrontCenter,
         Channel::BackCenter,
     ];
-    let _ = Coefficient::<T>::create(input_channels, output_channels);
+    let _ = Coefficient::<T>::create(&input_channels, &output_channels);
 }
 
 #[test]
@@ -635,13 +635,13 @@ where
             .collect()
     }
 
-    let input_channels = vec![
+    let input_channels = [
         Channel::FrontLeft,
         Channel::Silence,
         Channel::FrontRight,
         Channel::FrontCenter,
     ];
-    let output_channels = vec![
+    let output_channels = [
         Channel::Silence,
         Channel::FrontLeft,
         Channel::Silence,
@@ -650,7 +650,7 @@ where
     ];
 
     // Get a redirect matrix since the output layout is asymmetric.
-    let coefficient = Coefficient::<T>::create(input_channels.clone(), output_channels.clone());
+    let coefficient = Coefficient::<T>::create(&input_channels, &output_channels);
 
     let expected = compute_redirect_matrix::<T>(&input_channels, &output_channels);
     assert_eq!(coefficient.matrix, expected);
