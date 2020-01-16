@@ -2,11 +2,9 @@
 
 [![Build Status](https://travis-ci.com/ChunMinChang/audio-mixer.svg?branch=master)](https://travis-ci.com/ChunMinChang/audio-mixer)
 
-Mixing audio data from any inpuy channel layout to any output channel layout.
+Mixing audio data from any input channel layout to any output channel layout.
 
-The code is based from [cubeb][cubeb]'s [cubeb_mixer][cubeb_mixer],
-which adapts the code from [FFmpeg libswresample's rematrix.c][rematrix].
-The code is refactored from _C/C++_ to _Rust_.
+The code here is a refactored version from [cubeb][cubeb]'s [cubeb_mixer(_C/C++_)][cubeb_mixer], which adapts the code from [FFmpeg libswresample's rematrix.c][rematrix] .
 The original implementation is in [cubeb-coreaudio-rs][cubeb-coreaudio-rs]'s [PR23][pr23]
 
 ## License
