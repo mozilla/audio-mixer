@@ -1,6 +1,11 @@
 #[macro_use]
 extern crate bitflags;
 
+#[cfg(feature = "capi")]
+pub mod capi;
+#[cfg(feature = "capi")]
+pub use capi::*;
+
 mod channel;
 mod coefficient;
 

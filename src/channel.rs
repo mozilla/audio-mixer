@@ -1,5 +1,6 @@
 // The number of channels must be unique and start from 0. They will be treated as indice in the
 // mixing matrix and used to form unique bitflags in the channel map, which is a bitmap.
+#[repr(C)] // This might be exposed via capi.rs
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Channel {
     FrontLeft = 0,
