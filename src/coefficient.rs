@@ -723,6 +723,8 @@ mod test {
 
     #[test]
     fn test_normalize() {
+        use float_cmp::approx_eq;
+
         let m = vec![
             vec![1.0_f64, 2.0_f64, 3.0_f64],
             vec![4.0_f64, 6.0_f64, 10.0_f64],
@@ -747,6 +749,6 @@ mod test {
             max_row_sum = max_row_sum.max(row.iter().sum());
             assert!(row.iter().sum::<f64>() <= smaller_max);
         }
-        assert!((smaller_max - max_row_sum).abs() < std::f64::EPSILON);
+        assert!(approx_eq!(f64, smaller_max, max_row_sum));
     }
 }
