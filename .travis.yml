@@ -12,8 +12,7 @@ env:
 before_script:
   - rustc --version
   - cargo --version
-  - rustup component add rustfmt
-  - rustup component add clippy
+  - sh install_rustfmt_clippy.sh
 script:
   - cargo fmt --all -- --check
   - cargo clippy --all-targets --all-features -- -D warnings
