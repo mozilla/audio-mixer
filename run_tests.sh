@@ -7,6 +7,16 @@ if [ -z "${RUST_BACKTRACE}" ]; then
 fi
 echo "RUST_BACKTRACE is set to ${RUST_BACKTRACE}\n"
 
+# We need to run `cargo clean` before the `cargo test`. Otherwise, we may get a
+# "multiple matching crates for `audio_mixer`" error when running `test_build_ffi` since
+# `audio_mixer` crate may be built before (e.g., previous test round) and `cargo test` will
+# build another one again.
+cargo clean
+
+# Regular Tests
+echo "\ncargo test\n----------"
+cargo test --workspace --verbose
+
 # Format check
 echo "cargo fmt\n----------"
 cargo fmt --all -- --check
@@ -14,12 +24,3 @@ cargo fmt --all -- --check
 # Lints check
 echo "\ncargo clippy\n----------"
 cargo clippy --workspace -- -D warnings
-
-# Regular Tests
-echo "\ncargo test\n----------"
-# We need to run `cargo clean` before the `cargo test`. Otherwise, we will get a
-# "multiple matching crates for `audio_mixer`" error when running `test_build_ffi`
-# since `cargo clippy` already build a `audio_mixer` crate and `cargo test` will
-# build another one again.
-cargo clean
-cargo test --workspace --verbose
