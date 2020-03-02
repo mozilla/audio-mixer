@@ -17,4 +17,9 @@ cargo clippy --workspace -- -D warnings
 
 # Regular Tests
 echo "\ncargo test\n----------"
+# We need to run `cargo clean` before the `cargo test`. Otherwise, we will get a
+# "multiple matching crates for `audio_mixer`" error when running `test_build_ffi`
+# since `cargo clippy` already build a `audio_mixer` crate and `cargo test` will
+# build another one again.
+cargo clean
 cargo test --workspace --verbose

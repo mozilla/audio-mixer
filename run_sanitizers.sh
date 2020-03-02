@@ -34,6 +34,11 @@ do
     echo "Skip the test that panics. Leaking memory when the program drops out abnormally is ok."
     options="-- --Z unstable-options --exclude-should-panic"
   fi
+  # We need to run `cargo clean` before the `cargo test`. Otherwise, we will get a
+  # "multiple matching crates for `audio_mixer`" error when running `test_build_ffi` since
+  # `audio_mixer` crate is built before (e.g., previous test round) and `cargo test` will
+  # build another one again.
+  cargo clean
   RUSTFLAGS="-Z sanitizer=${san}" cargo test $options
 done
 

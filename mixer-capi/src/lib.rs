@@ -166,6 +166,35 @@ mod test {
     use std::fmt::Debug;
 
     #[test]
+    fn test_build_ffi() {
+        use std::process::Command;
+
+        let output = Command::new("make")
+            .arg("-C")
+            .arg("examples")
+            .arg("clean")
+            .arg("check")
+            .output()
+            .expect("failed to compile test files");
+
+        println!("status: {}", output.status);
+        println!("--- stdout ---");
+        println!("{}", String::from_utf8_lossy(&output.stdout));
+        println!("-- stderr ---");
+        println!("{}", String::from_utf8_lossy(&output.stderr));
+        assert!(output.status.success());
+
+        assert!(Command::new("make")
+            .arg("-C")
+            .arg("examples")
+            .arg("clean")
+            .output()
+            .expect("failed to clean up compiled files")
+            .status
+            .success());
+    }
+
+    #[test]
     fn test_c_api() {
         test_c_api_by_type::<f32>();
         test_c_api_by_type::<i16>();
