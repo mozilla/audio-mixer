@@ -44,7 +44,6 @@ pub extern "C" fn mixer_mix(
 
 // Exposed data type
 // ------------------------------------------------------------------------------------------------
-// TODO: Use `cbindgen` to generate C interfaces.
 #[allow(dead_code)] // To avoid clippy warnings.
 #[repr(C)]
 pub enum Format {

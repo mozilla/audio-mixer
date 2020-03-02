@@ -26,4 +26,7 @@ name = "benchmark"
 harness = false
 
 [features]
-capi = []
+capi = ["cbindgen"]
+
+[build-dependencies]
+cbindgen = { version = "0.13", optional = true }
