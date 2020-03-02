@@ -8,10 +8,13 @@ fi
 echo "RUST_BACKTRACE is set to ${RUST_BACKTRACE}\n"
 
 # Format check
+echo "cargo fmt\n----------"
 cargo fmt --all -- --check
 
 # Lints check
+echo "\ncargo clippy\n----------"
 cargo clippy --workspace -- -D warnings
 
 # Regular Tests
-cargo test --verbose --workspace
+echo "\ncargo test\n----------"
+cargo test --workspace --verbose
