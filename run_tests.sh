@@ -8,10 +8,10 @@ fi
 echo "RUST_BACKTRACE is set to ${RUST_BACKTRACE}\n"
 
 # Format check
-cargo fmt --all -- --check
+cargo fmt -- --check
 
 # Lints check
 cargo clippy --all-targets --all-features -- -D warnings
 
 # Regular Tests
-cargo test --verbose --all
+cargo test --verbose
