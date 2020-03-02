@@ -11,7 +11,7 @@ echo "RUST_BACKTRACE is set to ${RUST_BACKTRACE}\n"
 cargo fmt --all -- --check
 
 # Lints check
-cargo clippy --all-targets --all-features -- -D warnings
+cargo clippy --workspace -- -D warnings
 
 # Regular Tests
-cargo test --verbose --all
+cargo test --verbose --workspace
