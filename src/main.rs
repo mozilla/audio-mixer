@@ -5,11 +5,13 @@ fn main() {
     // f32
     let input_channels = [
         Channel::FrontLeft,
+        Channel::SideLeft,
         Channel::Silence,
         Channel::FrontRight,
+        Channel::SideRight,
         Channel::FrontCenter,
     ];
-    let output_channels = [Channel::FrontLeft, Channel::FrontRight];
+    let output_channels = [Channel::FrontLeft, Channel::Silence, Channel::FrontRight];
 
     let mut input_buffer = vec![0.0; input_channels.len()];
     for (i, data) in input_buffer.iter_mut().enumerate() {
