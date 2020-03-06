@@ -14,7 +14,6 @@ before_script:
   - cargo --version
   - sh install_rustfmt_clippy.sh
 script:
-  - cargo build --verbose --all
   - sh run_tests.sh
   - sh run_sanitizers.sh
 jobs:
