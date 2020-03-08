@@ -8,11 +8,6 @@ fi
 echo "RUST_BACKTRACE is set to ${RUST_BACKTRACE}\n"
 
 # Regular Tests
-# We need to run `cargo clean` before the `cargo test`. Otherwise, we will get a
-# "multiple matching crates for `bitflags`" error when running `test_build_ffi`
-# since `bitflags` crate may be built before (e.g., previous test round) and
-# `cargo test` will build another one again.
-cargo clean
 cargo test --verbose --all-features
 
 # Format check

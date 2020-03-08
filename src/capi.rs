@@ -167,31 +167,79 @@ mod test {
 
     #[test]
     fn test_build_ffi() {
-        use std::process::Command;
+        use std::process::{Command, Output};
 
-        let output = Command::new("make")
-            .arg("-C")
-            .arg("examples")
-            .arg("clean")
-            .arg("check")
+        const C_FILE: &str = "examples/audio_mixer.c";
+        const HEADER_DIR: &str = "include/";
+        const LIBRARY_DIR: &str = "target/debug/";
+        const LIBRARY_NAME: &str = "audio_mixer";
+        const EXECUTABLE: &str = "examples/audio_mixer";
+
+        let build_library = Command::new("cargo")
+            .arg("build")
+            .arg("--lib")
+            .arg("--features")
+            .arg("capi")
             .output()
-            .expect("failed to compile test files");
+            .expect("failed to build library");
+        print_command_message(&build_library);
+        assert!(build_library.status.success());
 
-        println!("status: {}", output.status);
-        println!("--- stdout ---");
-        println!("{}", String::from_utf8_lossy(&output.stdout));
-        println!("-- stderr ---");
-        println!("{}", String::from_utf8_lossy(&output.stderr));
-        assert!(output.status.success());
+        let mut flags = vec![
+            format!("-I{}", HEADER_DIR),
+            "-L".to_string(),
+            LIBRARY_DIR.to_string(),
+            format!("-l{}", LIBRARY_NAME),
+        ];
 
-        assert!(Command::new("make")
-            .arg("-C")
-            .arg("examples")
-            .arg("clean")
+        // Some symbols used in our dependencies won't be linked automatically on Linux or Windows.
+        if cfg!(target_os = "linux") {
+            let mut dependencies = vec![
+                "-lpthread".to_string(),
+                "-Wl,--no-as-needed".to_string(),
+                "-ldl".to_string(),
+            ];
+            flags.append(&mut dependencies);
+        } else if cfg!(target_os = "windows") {
+            let mut dependencies = vec!["-lWS2_32".to_string(), "-luserenv".to_string()];
+            flags.append(&mut dependencies);
+        }
+
+        let build_executable = Command::new("c++")
+            .arg(C_FILE)
+            .args(&flags)
+            .arg("-o")
+            .arg(EXECUTABLE)
             .output()
-            .expect("failed to clean up compiled files")
-            .status
-            .success());
+            .expect("failed to build executable");
+        print_command_message(&build_executable);
+        assert!(build_executable.status.success());
+
+        let run_executable = Command::new(EXECUTABLE)
+            .output()
+            .expect("failed to run executable");
+        let output = String::from_utf8(run_executable.stdout).unwrap();
+        println!("{}", output);
+        assert!(run_executable.status.success());
+
+        let remove_executable = Command::new("rm")
+            .arg(EXECUTABLE)
+            .output()
+            .expect("failed to remove executable");
+        print_command_message(&remove_executable);
+        assert!(remove_executable.status.success());
+
+        fn print_command_message(output: &Output) {
+            let message = String::from_utf8(if output.status.success() {
+                output.stdout.clone()
+            } else {
+                output.stderr.clone()
+            })
+            .unwrap();
+            if !message.is_empty() {
+                println!("{}", message);
+            }
+        }
     }
 
     #[test]
