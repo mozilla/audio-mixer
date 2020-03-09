@@ -175,12 +175,7 @@ mod test {
         const LIBRARY_NAME: &str = "audio_mixer_capi";
         const EXECUTABLE: &str = "examples/audio_mixer";
 
-        let build_library = Command::new("cargo")
-            .arg("build")
-            .output()
-            .expect("failed to build library");
-        print_command_message(&build_library);
-        assert!(build_library.status.success());
+        build_ffi_library();
 
         let mut flags = vec![
             format!("-I{}", HEADER_DIR),
@@ -236,6 +231,31 @@ mod test {
             if !message.is_empty() {
                 println!("{}", message);
             }
+        }
+
+        fn build_ffi_library() {
+            use std::path::Path;
+
+            const HEADER_NAME: &str = "audio_mixer.h";
+            let lib_name = format!("lib{}", LIBRARY_NAME);
+            let path = Path::new(LIBRARY_DIR)
+                .join(lib_name.as_str())
+                .with_extension("a");
+            if path.exists() {
+                assert!(
+                    Path::new(HEADER_DIR).join(HEADER_NAME).exists(),
+                    "No header gnerated but library exists!"
+                );
+                return;
+            }
+
+            let build_library = Command::new("cargo")
+                .arg("build")
+                .arg("--lib")
+                .output()
+                .expect("failed to build library");
+            print_command_message(&build_library);
+            assert!(build_library.status.success());
         }
     }
 

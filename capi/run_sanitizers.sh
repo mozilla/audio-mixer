@@ -19,11 +19,19 @@ fi
 echo "RUST_BACKTRACE is set to ${RUST_BACKTRACE}\n"
 
 # `cbindgen` cannot work with sanitizers, so we need to avoid building crate
-# with `cbindgen` when enabling sanitizers. We can generate the library and 
-# the header that will be used during the test in advance and then disable 
-# the build script.
+# with `cbindgen` when enabling sanitizers. We can generate the library and
+# the header that will be used during the test in advance, and then disable
+# the build script, which uses `cbindgen`, to run the tests with sanitizers.
 
-# Generate the library and the header that will be used during the test
+# Generating the library and the header that will be used during the test is
+# necessary, before running `test_build_ffi` with sanitizers. If no FFI library
+# is built, `cargo build --lib` will be executed in `test_build_ffi` to
+# generate the FFI library we need. However, when `RUSTFLAGS="-Z sanitizer=*"`
+# is set when building the FFI library, then the library will need symbols
+# in `__*san_` pattern and we will need to set those `*San` symbol via `-l`
+# when running `test_build_ffi`. Otherwise the linking will fail.
+# To avoid those linking settings, the simplest way is to build the FFI
+# library in advance, and running test with pre-built FFI library.
 echo "Build C API library and header\n------------------------------"
 cargo build --lib
 
@@ -42,14 +50,7 @@ for san in "${sanitizers[@]}"
 do
   San="$(tr '[:lower:]' '[:upper:]' <<< ${san:0:1})${san:1}"
   echo "\n\nRun ${San}Sanitizer\n------------------------------"
-  if [ $san = "leak" ]; then
-    options=""
-  else
-    echo "Avoid running 'test_build_ffi' since we will have a 'Undefined symbols' for __*san_*"
-    options="test_c_api"
-  fi
-
-  RUSTFLAGS="-Z sanitizer=${san}" cargo test $options
+  RUSTFLAGS="-Z sanitizer=${san}" cargo test
 done
 
 mv $ORIGINAL_MANIFEST $TEST_MANIFEST
