@@ -1,3 +1,6 @@
+# Bail out once getting an error.
+set -e
+
 # Display verbose backtrace for debugging if backtrace is unset
 if [ -z "${RUST_BACKTRACE}" ]; then
   export RUST_BACKTRACE=1

@@ -3,10 +3,10 @@
 
 # See: https://github.com/rust-lang/rust/issues/39699 for more sanitizer support.
 
-toolchain=$(rustup default)
+toolchain="$(rustup default)"
 echo "\nUse Rust toolchain: $toolchain"
 
-NIGHTLY_PREFIX="nightly-"
+NIGHTLY_PREFIX="nightly"
 if [ ! -z "${toolchain##$NIGHTLY_PREFIX*}" ]; then
   echo "The sanitizer is only available on Rust Nightly only. Skip."
   exit
