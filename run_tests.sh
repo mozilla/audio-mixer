@@ -7,11 +7,14 @@ if [ -z "${RUST_BACKTRACE}" ]; then
 fi
 echo "RUST_BACKTRACE is set to ${RUST_BACKTRACE}\n"
 
+# Regular Tests
+echo "\ncargo test\n----------"
+cargo test --workspace --verbose
+
 # Format check
+echo "cargo fmt\n----------"
 cargo fmt --all -- --check
 
 # Lints check
-cargo clippy --all-targets --all-features -- -D warnings
-
-# Regular Tests
-cargo test --verbose --all
+echo "\ncargo clippy\n----------"
+cargo clippy --workspace -- -D warnings
