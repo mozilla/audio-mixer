@@ -420,6 +420,8 @@ pub trait MixingCoefficient {
     // Precheck if overflow occurs when converting value from Self::Coef type to Self type.
     fn would_overflow_from_coefficient_value(coefficient: &[Vec<f64>]) -> Option<bool>;
 
+    // Convert f32 (Self) -> f32 (Self::Coef) or i16 (Self) -> i32 (Self::Coef)
+    #[allow(clippy::wrong_self_convention)]
     fn to_coefficient_value(value: Self) -> Self::Coef;
     fn from_coefficient_value(value: Self::Coef, would_overflow: Option<bool>) -> Self;
 }
