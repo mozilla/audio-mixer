@@ -1,6 +1,6 @@
 # Audio Mixer
 
-[![Build Status](https://travis-ci.com/ChunMinChang/audio-mixer.svg?branch=master)](https://travis-ci.com/ChunMinChang/audio-mixer)
+[![CircleCI](https://circleci.com/gh/mozilla/audio-mixer.svg?style=svg)](https://circleci.com/gh/mozilla/audio-mixer)
 
 Mixing audio data from any input channel layout to any output channel layout,
 in a *matrix-multiplication* form.
