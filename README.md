@@ -1,6 +1,7 @@
 # Audio Mixer
 
 [![CircleCI](https://circleci.com/gh/mozilla/audio-mixer.svg?style=svg)](https://circleci.com/gh/mozilla/audio-mixer)
+[![Build & Test](https://github.com/mozilla/audio-mixer/actions/workflows/test.yml/badge.svg)](https://github.com/mozilla/audio-mixer/actions/workflows/test.yml)
 
 Mixing audio data from any input channel layout to any output channel layout,
 in a *matrix-multiplication* form.
