@@ -8,7 +8,7 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
         rust: [stable]
         experimental: [false]
         include:
@@ -17,6 +17,9 @@ jobs:
             experimental: true
           - rust: nightly
             os: ubuntu-latest
+            experimental: true
+          - rust: nightly
+            os: windows-latest
             experimental: true
 
     steps:
@@ -30,8 +33,6 @@ jobs:
     - name: Setup
       run: |
         rustup default ${{ matrix.rust }}
-        toolchain=$(rustup default)
-        echo "Use Rust toolchain: $toolchain"
         rustc --version
         cargo --version
         
