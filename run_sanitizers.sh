@@ -35,8 +35,8 @@ do
     options="-- --Z unstable-options --exclude-should-panic"
   fi
   if [ $san = "memory" ]; then
-    if [ -z "${OSTYPE##$darwin*}" ]; then
-      echo -e "Skip the MemorySanitizer on Mac OS since it doesn't works with targets: x86_64-apple-darwin"
+    if [ -z "${toolchain##*darwin*}" ]; then
+      echo -e "Skip the MemorySanitizer on Mac OS since it doesn't works with $toolchain"
     else
       echo -e "Skip the MemorySanitizer since it fails to run custom build command for bitflags crate"
     fi
