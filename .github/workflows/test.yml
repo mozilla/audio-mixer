@@ -1,0 +1,40 @@
+name: Build & Test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        rust: [stable, nightly]
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Install Rust
+      run: rustup toolchain install ${{ matrix.rust }} --profile minimal --component rustfmt clippy
+        
+    - name: Setup
+      run: |
+        rustup default ${{ matrix.rust }}
+        toolchain=$(rustup default)
+        echo "Use Rust toolchain: $toolchain"
+        rustc --version
+        cargo --version
+        
+    - name: Build
+      run: cargo build --verbose
+      
+    - name: Regular Test
+      shell: bash
+      run: ./run_tests.sh
+
+    - name: Sanitizer Test
+      if: ${{ matrix.rust == 'nightly' }}
+      shell: bash
+      run: ./run_sanitizers.sh
