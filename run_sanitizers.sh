@@ -34,8 +34,12 @@ do
     echo "Skip the test that panics. Leaking memory when the program drops out abnormally is ok."
     options="-- --Z unstable-options --exclude-should-panic"
   fi
-  if [ -z "${OSTYPE##$darwin*}" ] && [ $san = "memory" ]; then
-    echo "Skip the MemorySanitizer on Mac OS since it doesn't works with targets: x86_64-apple-darwin"
+  if [ $san = "memory" ]; then
+    if [ -z "${OSTYPE##$darwin*}" ]; then
+      echo "Skip the MemorySanitizer on Mac OS since it doesn't works with targets: x86_64-apple-darwin"
+    else
+      echo "Skip the MemorySanitizer since it fails to run custom build command for bitflags crate"
+    fi
     continue
   fi
   RUSTFLAGS="-Z sanitizer=${san}" cargo test $options
