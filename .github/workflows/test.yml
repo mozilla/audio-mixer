@@ -5,11 +5,19 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    continue-on-error: true
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest]
-        rust: [stable, nightly]
+        rust: [stable]
+        experimental: [false]
+        include:
+          - rust: nightly
+            os: macos-latest
+            experimental: true
+          - rust: nightly
+            os: ubuntu-latest
+            experimental: true
 
     steps:
     - uses: actions/checkout@v2
