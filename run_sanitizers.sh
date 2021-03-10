@@ -12,6 +12,11 @@ if [ ! -z "${toolchain##$NIGHTLY_PREFIX*}" ]; then
   exit
 fi
 
+if [ -z "${toolchain##*windows*}" ]; then
+  echo -e "The sanitizer doesn't work on Windows platform yet"
+  exit
+fi
+
 # Display verbose backtrace for debugging if backtrace is unset
 if [ -z "${RUST_BACKTRACE}" ]; then
   export RUST_BACKTRACE=1
