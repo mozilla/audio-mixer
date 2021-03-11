@@ -5,7 +5,7 @@ set -e
 if [ -z "${RUST_BACKTRACE}" ]; then
   export RUST_BACKTRACE=1
 fi
-echo "RUST_BACKTRACE is set to ${RUST_BACKTRACE}\n"
+echo -e "RUST_BACKTRACE is set to ${RUST_BACKTRACE}\n"
 
 # Format check
 cargo fmt --all -- --check
