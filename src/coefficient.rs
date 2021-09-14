@@ -383,10 +383,10 @@ where
     ) -> Vec<Vec<f64>> {
         let mut matrix = Vec::with_capacity(output_channels.len());
         for output_channel in output_channels {
-            let output_channel_index = output_channel.clone().number();
+            let output_channel_index = (*output_channel).number();
             let mut coefficients = Vec::with_capacity(input_channels.len());
             for input_channel in input_channels {
-                let input_channel_index = input_channel.clone().number();
+                let input_channel_index = (*input_channel).number();
                 coefficients.push(source[output_channel_index][input_channel_index]);
             }
             matrix.push(coefficients);
