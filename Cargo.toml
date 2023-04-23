@@ -4,7 +4,7 @@ description = "Mixing audio by the input and output channel layout"
 version = "0.1.2"
 authors = ["Chun-Min Chang <chun.m.chang@gmail.com>"]
 license = "MPL-2.0"
-repository = "https://github.com/ChunMinChang/audio-mixer"
+repository = "https://github.com/mozilla/audio-mixer"
 keywords = ["audio", "mixer", "mixing"]
 categories = ["multimedia::audio"]
 edition = "2018"
@@ -12,7 +12,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [badges]
-travis-ci = { repository = "ChunMinChang/audio-mixer" }
+travis-ci = { repository = "mozilla/audio-mixer" }
 
 [dependencies]
 bitflags = "1.2"
