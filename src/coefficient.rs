@@ -201,6 +201,7 @@ where
 
         // Return true if mixable channels are symmetric.
         fn is_symmetric(map: ChannelMap) -> bool {
+            #[allow(clippy::manual_is_multiple_of)] // Replace once we can depend on Rust >=1.87
             fn even(map: ChannelMap) -> bool {
                 map.bits().count_ones() % 2 == 0
             }
